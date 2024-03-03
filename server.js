@@ -1,45 +1,47 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const app = express();
+require('dotenv').config()
+const express = require('express')
+const mongoose = require('mongoose')
+const proudctRoute = require('./routes/productRoute');
+const errorMiddleware = require('./middleware/errorMiddleware')
+const cors = require('cors')
 
-app.use(express.json());
+const app = express()
+
+const PORT = process.env.PORT || 3030
+const MONGO_URL = process.env.MONGO_URL
+const FRONTEND = process.env.FRONTEND
+
+const corsOptions = {
+    origin: FRONTEND,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions))
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
 
 //routes
-app.get("/", (req, res) => {
-  res.send("Das ist willkommen :)");
-});
 
-app.post('/product', (rrq, res)=> {
-    console.log(req.body);
-    res.send(req.body);
+app.use('/api/products', proudctRoute);
+
+app.get('/', (req, res) => {
+    res.send('Hello NODE API')
 })
 
-app.get("/home", (req, res) => {
-  res.send("Das ist meine erste Backend test ich habe aleine geschrieben :)");
-});
+app.get('/blog', (req, res) => {
+    res.send('Hello Blog, My name is Devtamin')
+})
 
-app.get("/blog", (req, res) => {
-  res.send("Das ist meine blog :)");
-});
+app.use(errorMiddleware);
 
-app.get("/contact", (req, res) => {
-  res.send("Das ist meine blog :)");
-});
-
-
-mongoose.set('strictQuery', false);
-mongoose
-  .connect(
-    "mongodb+srv://node-ex-api:rmnktFFMumRsba4c@node-ex-ap.gjxkuvb.mongodb.net/node-ex-api"
-  ).then(()=>{
-    console.log("MongoDB connected");
-    app.listen(3030, ()=> {
-        console.log(`Node Express API ist running on http://localhost:3030`)
+mongoose.set("strictQuery", false)
+mongoose.
+connect(MONGO_URL)
+.then(() => {
+    console.log('connected to MongoDB')
+    app.listen(PORT, ()=> {
+        console.log(`Node API app is running on port ${PORT}`)
     });
-    
-  }).catch((error)=>{
+}).catch((error) => {
     console.log(error)
-  })
-  
-
-// >> 1: cLeUbLOFCL9jYtZj   >> 2: rmnktFFMumRsba4c
+})
