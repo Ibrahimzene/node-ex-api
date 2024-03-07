@@ -60,8 +60,9 @@ const deleteProduct = asyncHandler(async(req, res) =>{
         const {id} = req.params;
         const product = await Product.findByIdAndDelete(id);
         if(!product){
-            res.status(404);
-            throw new Error(`cannot find any product with ID ${id}`);
+            res.status(404).json({msg : `cannot find any product with ID ${id}`});
+/*             res.status(404);
+            throw new Error(`cannot find any product with ID ${id}`);  */
         }
         res.status(200).json(product);
         
@@ -69,8 +70,11 @@ const deleteProduct = asyncHandler(async(req, res) =>{
         res.status(500);
         throw new Error(error.message);
     }
-})
+}) 
 
+
+/* res.status(404).json({msg : `cannot find any product with ID ${id}`});
+ */
 module.exports = {
     getProducts,
     getProduct,
